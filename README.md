@@ -20,7 +20,7 @@ Wumpus World is a 4x4 grid-based environment designed to demonstrate logical rea
 
 - Grid Size: 4x4
 
-- Start Position: (0,0) (Bottom-Left)
+- Start Position: (1,1) (Bottom-Left)
 
 - Hazards:
 
