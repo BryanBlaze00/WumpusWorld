@@ -1,46 +1,59 @@
 # Wumpus World AI
 
-A Python implementation of the classic Wumpus World environment and Knowledge-Based (KB) agent as described in Artificial Intelligence: A Modern Approach (Russell & Norvig).
+A Python implementation of the classic Wumpus World environment from
+*Artificial Intelligence: A Modern Approach* by Russell and Norvig.
 
-## Project Overview
-
-Wumpus World is a 4x4 grid-based environment designed to demonstrate logical reasoning and decision-making under uncertainty. The agent must navigate the board, avoid lethal hazards (Pits and the Wumpus), collect the Gold, and safely return to the start cell (0,0).
-
-### Features
-
-- Environment Engine: Manages grid state, hazard placement, agent state, movement actions, and percept generation.
-
-- Dynamic Percepts: Detects Stench, Breeze, and Glitter relative to adjacent or current cells.
-
-- Extensible Architecture: Designed to support ASCII terminal rendering and automated logical inference engines (TELL / ASK).
-
----
-
-## Environment Layout
-
-- Grid Size: 4x4
-
-- Start Position: (1,1) (Bottom-Left)
-
-- Hazards:
-
-  - Pits: Emit a Breeze in adjacent orthogonal cells.
-
-  - Wumpus: Emits a Stench in adjacent orthogonal cells.
-
-- Objective: Locate the Gold (Glitter), grab it, and return safely to the starting point.
-
----
+The project explores how an agent can use its surroundings and stored
+knowledge to navigate a grid, avoid hazards, and find the gold. It is being
+developed incrementally, with the current work tracked in GitHub Issues.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.8 or newer
 
-### Running the Engine
+The current prototype uses only Python standard-library modules, so no package
+installation is required.
 
-Execute the main script to run the current environment simulation:
+### Running the Simulation
+
+From the repository root, run:
 
 ```bash
 python main.py
+```
+
+The simulation renders the board, prints the current percepts, and advances
+the agent through the demonstration loop.
+
+The renderer uses box-drawing characters and emojis. If a terminal cannot
+display them, configure the terminal for UTF-8 or use a UTF-8-capable
+integrated terminal.
+
+### Current Output
+
+![Current Wumpus World simulation](assets/current-simulation.png)
+
+## Project Structure
+
+| File | Responsibility |
+| --- | --- |
+| `main.py` | Starts and runs the current demonstration simulation. |
+| `environment.py` | Defines the board, hazards, percepts, and movement. |
+| `agent_state.py` | Stores the agent's position, direction, and status. |
+| `direction.py` | Defines the four directions and turn calculations. |
+| `renderer.py` | Draws the board and discovered percepts in the terminal. |
+| `kb.py` | Provides the knowledge-base foundation for agent reasoning. |
+| `agent.py` | Provides the knowledge-based agent foundation. |
+
+## Testing
+
+Automated tests are being developed as part of the project. For now, run the
+simulation as a manual smoke test:
+
+```bash
+python main.py
+```
+
+The issue tracker contains the current development tasks and project roadmap.
