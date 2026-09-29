@@ -31,6 +31,10 @@ The renderer uses box-drawing characters and emojis. If a terminal cannot
 display them, configure the terminal for UTF-8 or use a UTF-8-capable
 integrated terminal.
 
+### Current Output
+
+![Current Wumpus World simulation](assets/current-simulation.png)
+
 ## Project Structure
 
 | File | Responsibility |
