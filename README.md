@@ -40,7 +40,7 @@ Wumpus World is a 4x4 grid-based environment designed to demonstrate logical rea
 
 ### Running the Engine
 
-Execute the main script to run the base environment test:
+Execute the main script to run the current environment simulation:
 
 ```bash
-python wumpus_world.py
+python main.py
