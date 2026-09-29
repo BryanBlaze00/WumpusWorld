@@ -57,3 +57,13 @@ python scripts/main.py
 ```
 
 The issue tracker contains the current development tasks and project roadmap.
+
+## Contributing
+
+Contributions are welcome. Start by opening or selecting an issue, then create
+a branch for the work and open a pull request when it is ready. Pull requests
+to `master` require review before they can be merged.
+
+Please keep changes focused, describe what changed in the pull request, and
+include testing details when applicable. The repository's issue tracker is the
+best place to discuss ideas and find work to contribute.
