@@ -21,7 +21,7 @@ installation is required.
 From the repository root, run:
 
 ```bash
-python main.py
+python scripts/main.py
 ```
 
 The simulation renders the board, prints the current percepts, and advances
@@ -39,13 +39,13 @@ integrated terminal.
 
 | File | Responsibility |
 | --- | --- |
-| `main.py` | Starts and runs the current demonstration simulation. |
-| `environment.py` | Defines the board, hazards, percepts, and movement. |
-| `agent_state.py` | Stores the agent's position, direction, and status. |
-| `direction.py` | Defines the four directions and turn calculations. |
-| `renderer.py` | Draws the board and discovered percepts in the terminal. |
-| `kb.py` | Provides the knowledge-base foundation for agent reasoning. |
-| `agent.py` | Provides the knowledge-based agent foundation. |
+| `scripts/main.py` | Starts and runs the current demonstration simulation. |
+| `scripts/environment.py` | Defines the board, hazards, percepts, and movement. |
+| `scripts/agent_state.py` | Stores the agent's position, direction, and status. |
+| `scripts/direction.py` | Defines the four directions and turn calculations. |
+| `scripts/renderer.py` | Draws the board and discovered percepts in the terminal. |
+| `scripts/kb.py` | Provides the knowledge-base foundation for agent reasoning. |
+| `scripts/agent.py` | Provides the knowledge-based agent foundation. |
 
 ## Testing
 
@@ -53,7 +53,7 @@ Automated tests are being developed as part of the project. For now, run the
 simulation as a manual smoke test:
 
 ```bash
-python main.py
+python scripts/main.py
 ```
 
 The issue tracker contains the current development tasks and project roadmap.
