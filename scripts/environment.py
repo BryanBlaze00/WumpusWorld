@@ -38,6 +38,20 @@ class WumpusEnvironment:
         dy = abs(pos1[1] - pos2[1])
         return (dx + dy) == 1
 
+    def turn_left(self):
+        if not self.agent.is_alive:
+            return False
+
+        self.agent.direction = self.agent.direction.turn_left()
+        return True
+
+    def turn_right(self):
+        if not self.agent.is_alive:
+            return False
+
+        self.agent.direction = self.agent.direction.turn_right()
+        return True
+
     def move_forward(self):
         if not self.agent.is_alive:
             return False
