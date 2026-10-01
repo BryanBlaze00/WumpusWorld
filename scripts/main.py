@@ -48,6 +48,6 @@ def run_simulation(env, renderer, delay=1.0):
 
 
 if __name__ == "__main__":
-    env = WumpusEnvironment()
-    renderer = BoardRenderer(env)
-    run_simulation(env, renderer, delay=1.0)
+    simulation_env = WumpusEnvironment()
+    board_renderer = BoardRenderer(simulation_env)
+    run_simulation(simulation_env, board_renderer, delay=1.0)
