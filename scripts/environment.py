@@ -52,6 +52,16 @@ class WumpusEnvironment:
         self.agent.direction = self.agent.direction.turn_right()
         return True
 
+    def grab(self):
+        if not self.agent.is_alive:
+            return False
+
+        if (self.agent.x, self.agent.y) != self.gold_pos:
+            return False
+
+        self.agent.has_gold = True
+        return True
+
     def move_forward(self):
         if not self.agent.is_alive:
             return False
