@@ -48,6 +48,33 @@ class TestTurningActions(unittest.TestCase):
         self.assertFalse(result)
         self.assertEqual(environment.agent.direction, original_direction)
 
+    def test_grab_collects_gold(self):
+        environment = WumpusEnvironment()
+        environment.agent.x, environment.agent.y = environment.gold_pos
+
+        result = environment.grab()
+
+        self.assertTrue(result)
+        self.assertTrue(environment.agent.has_gold)
+
+    def test_grab_fails_away_from_gold(self):
+        environment = WumpusEnvironment()
+
+        result = environment.grab()
+
+        self.assertFalse(result)
+        self.assertFalse(environment.agent.has_gold)
+
+    def test_dead_agent_cannot_grab_gold(self):
+        environment = WumpusEnvironment()
+        environment.agent.x, environment.agent.y = environment.gold_pos
+        environment.agent.is_alive = False
+
+        result = environment.grab()
+
+        self.assertFalse(result)
+        self.assertFalse(environment.agent.has_gold)
+
 
 if __name__ == "__main__":
     unittest.main()

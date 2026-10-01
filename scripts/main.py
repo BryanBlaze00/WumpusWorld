@@ -33,8 +33,8 @@ def run_simulation(env, renderer, delay=1.0):
         else:
             print("Action: Moved Forward\n")
 
-        if (env.agent.x, env.agent.y) == env.gold_pos:
-            env.agent.has_gold = True
+        if env.get_percepts()["glitter"]:
+            env.grab()
 
     # Render final state
     clear_screen()
