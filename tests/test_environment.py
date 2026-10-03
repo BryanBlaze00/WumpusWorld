@@ -135,6 +135,46 @@ class TestMovement(unittest.TestCase):
         )
 
 
+class TestShooting(unittest.TestCase):
+    def test_shooting_in_wumpus_direction_kills_wumpus(self):
+        environment = WumpusEnvironment()
+        environment.agent.x, environment.agent.y = (1, 1)
+        environment.agent.direction = Direction.NORTH
+
+        result = environment.shoot()
+
+        self.assertTrue(result)
+        self.assertFalse(environment.wumpus_alive)
+        self.assertFalse(environment.agent.has_arrow)
+
+    def test_missed_shot_consumes_arrow(self):
+        environment = WumpusEnvironment()
+        environment.agent.direction = Direction.EAST
+
+        result = environment.shoot()
+
+        self.assertTrue(result)
+        self.assertTrue(environment.wumpus_alive)
+        self.assertFalse(environment.agent.has_arrow)
+
+    def test_second_shot_is_rejected(self):
+        environment = WumpusEnvironment()
+
+        self.assertTrue(environment.shoot())
+        self.assertFalse(environment.shoot())
+        self.assertFalse(environment.agent.has_arrow)
+
+    def test_dead_agent_cannot_shoot(self):
+        environment = WumpusEnvironment()
+        environment.agent.is_alive = False
+
+        result = environment.shoot()
+
+        self.assertFalse(result)
+        self.assertTrue(environment.agent.has_arrow)
+        self.assertTrue(environment.wumpus_alive)
+
+
 class TestHazardsAndPercepts(unittest.TestCase):
     def test_entering_pit_kills_agent(self):
         environment = WumpusEnvironment()

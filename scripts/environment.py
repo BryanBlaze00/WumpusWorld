@@ -62,6 +62,33 @@ class WumpusEnvironment:
         self.agent.has_gold = True
         return True
 
+    def shoot(self):
+        if not self.agent.is_alive or not self.agent.has_arrow:
+            return False
+
+        self.agent.has_arrow = False
+
+        dx, dy = 0, 0
+        if self.agent.direction == Direction.NORTH:
+            dy = 1
+        elif self.agent.direction == Direction.EAST:
+            dx = 1
+        elif self.agent.direction == Direction.SOUTH:
+            dy = -1
+        elif self.agent.direction == Direction.WEST:
+            dx = -1
+
+        x, y = self.agent.x + dx, self.agent.y + dy
+        while 1 <= x <= self.grid_size and 1 <= y <= self.grid_size:
+            if (x, y) == self.wumpus_pos and self.wumpus_alive:
+                self.wumpus_alive = False
+                self.record_current_percepts()
+                break
+            x += dx
+            y += dy
+
+        return True
+
     def move_forward(self):
         if not self.agent.is_alive:
             return False
