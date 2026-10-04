@@ -40,6 +40,7 @@ integrated terminal.
 | File | Responsibility |
 | --- | --- |
 | `scripts/main.py` | Starts and runs the current demonstration simulation. |
+| `scripts/testmain.py` | Renders a custom board layout for manual inspection. |
 | `scripts/environment.py` | Defines the board, hazards, percepts, and movement. |
 | `scripts/agent_state.py` | Stores the agent's position, direction, and status. |
 | `scripts/direction.py` | Defines the four directions and turn calculations. |
@@ -68,6 +69,13 @@ environment = WumpusEnvironment(
     pits={(2, 2), (4, 4)},
     gold_pos=(3, 5),
 )
+```
+
+To render the example custom layout without running the simulation or test
+suite, run:
+
+```bash
+python scripts/testmain.py
 ```
 
 ## Contributing
