@@ -223,5 +223,41 @@ class TestHazardsAndPercepts(unittest.TestCase):
         self.assertTrue(percepts["glitter"])
 
 
+class TestBoardLayouts(unittest.TestCase):
+    def test_custom_layout_is_used(self):
+        environment = WumpusEnvironment(
+            grid_size=5,
+            wumpus_pos=(5, 5),
+            pits={(2, 2), (4, 4)},
+            gold_pos=(3, 5),
+        )
+
+        self.assertEqual(environment.grid_size, 5)
+        self.assertEqual(environment.wumpus_pos, (5, 5))
+        self.assertEqual(environment.pits, {(2, 2), (4, 4)})
+        self.assertEqual(environment.gold_pos, (3, 5))
+
+    def test_default_layout_is_unchanged(self):
+        environment = WumpusEnvironment()
+
+        self.assertEqual(environment.grid_size, 4)
+        self.assertEqual(environment.wumpus_pos, (1, 3))
+        self.assertEqual(environment.pits, {(3, 1), (3, 3)})
+        self.assertEqual(environment.gold_pos, (2, 3))
+
+    def test_rejects_invalid_layout_positions(self):
+        invalid_layouts = (
+            {"wumpus_pos": (5, 5)},
+            {"pits": {(0, 2)}},
+            {"gold_pos": (1, 1)},
+            {"wumpus_pos": (2, 2), "gold_pos": (2, 2)},
+        )
+
+        for layout in invalid_layouts:
+            with self.subTest(layout=layout):
+                with self.assertRaises(ValueError):
+                    WumpusEnvironment(**layout)
+
+
 if __name__ == "__main__":
     unittest.main()

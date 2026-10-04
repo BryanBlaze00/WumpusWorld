@@ -58,6 +58,18 @@ python scripts/main.py
 
 The issue tracker contains the current development tasks and project roadmap.
 
+Custom layouts can be created in Python by passing positions to the
+environment:
+
+```python
+environment = WumpusEnvironment(
+    grid_size=5,
+    wumpus_pos=(5, 5),
+    pits={(2, 2), (4, 4)},
+    gold_pos=(3, 5),
+)
+```
+
 ## Contributing
 
 Contributions are welcome. Start by opening or selecting an issue, then create
