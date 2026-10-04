@@ -3,13 +3,20 @@ from direction import Direction
 
 class WumpusEnvironment:
 
-    def __init__(self, grid_size=4):
+    def __init__(
+        self,
+        grid_size=4,
+        wumpus_pos=(1, 3),
+        pits=None,
+        gold_pos=(2, 3),
+    ):
         self.grid_size = grid_size
         self.agent = AgentState(x=1, y=1, direction=Direction.EAST)
 
-        self.wumpus_pos = (1, 3)
-        self.pits = {(3, 1), (3, 3)}
-        self.gold_pos = (2, 3)
+        self.wumpus_pos = wumpus_pos
+        self.pits = set(pits) if pits is not None else {(3, 1), (3, 3)}
+        self.gold_pos = gold_pos
+        self._validate_layout()
         self.wumpus_alive = True
 
         # Stores percept history: {(x, y): {"stench": bool, "breeze": bool, "glitter": bool}}
@@ -17,6 +24,40 @@ class WumpusEnvironment:
 
         # Log initial tile percepts at (1,1)
         self.record_current_percepts()
+
+    def _validate_layout(self):
+        if not isinstance(self.grid_size, int) or self.grid_size < 1:
+            raise ValueError("grid_size must be a positive integer")
+
+        positions = {
+            "wumpus": self.wumpus_pos,
+            "gold": self.gold_pos,
+        }
+        for name, position in positions.items():
+            if not self._is_valid_position(position):
+                raise ValueError(f"{name} position is outside the board")
+
+        for pit in self.pits:
+            if not self._is_valid_position(pit):
+                raise ValueError("pit position is outside the board")
+
+        start = (self.agent.x, self.agent.y)
+        if self.wumpus_pos == start or self.gold_pos == start or start in self.pits:
+            raise ValueError("the agent start position cannot contain an object")
+
+        if self.wumpus_pos == self.gold_pos or self.wumpus_pos in self.pits:
+            raise ValueError("hazard and gold positions cannot overlap")
+        if self.gold_pos in self.pits:
+            raise ValueError("hazard and gold positions cannot overlap")
+
+    def _is_valid_position(self, position):
+        return (
+            isinstance(position, tuple)
+            and len(position) == 2
+            and all(isinstance(coordinate, int) for coordinate in position)
+            and 1 <= position[0] <= self.grid_size
+            and 1 <= position[1] <= self.grid_size
+        )
 
     def record_current_percepts(self):
         pos = (self.agent.x, self.agent.y)

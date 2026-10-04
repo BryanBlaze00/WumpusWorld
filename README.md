@@ -40,6 +40,7 @@ integrated terminal.
 | File | Responsibility |
 | --- | --- |
 | `scripts/main.py` | Starts and runs the current demonstration simulation. |
+| `scripts/testmain.py` | Renders a custom board layout for manual inspection. |
 | `scripts/environment.py` | Defines the board, hazards, percepts, and movement. |
 | `scripts/agent_state.py` | Stores the agent's position, direction, and status. |
 | `scripts/direction.py` | Defines the four directions and turn calculations. |
@@ -57,6 +58,25 @@ python scripts/main.py
 ```
 
 The issue tracker contains the current development tasks and project roadmap.
+
+Custom layouts can be created in Python by passing positions to the
+environment:
+
+```python
+environment = WumpusEnvironment(
+    grid_size=5,
+    wumpus_pos=(5, 5),
+    pits={(1, 4), (2, 2), (3, 3), (4, 4), (5, 1)},
+    gold_pos=(3, 5),
+)
+```
+
+To render the example custom layout without running the simulation or test
+suite, run:
+
+```bash
+python scripts/testmain.py
+```
 
 ## Contributing
 
