@@ -41,6 +41,7 @@ integrated terminal.
 | --- | --- |
 | `scripts/main.py` | Starts and runs the current demonstration simulation. |
 | `scripts/testmain.py` | Renders a custom board layout for manual inspection. |
+| `scripts/randommain.py` | Renders a seeded randomized board for manual inspection. |
 | `scripts/environment.py` | Defines the board, hazards, percepts, and movement. |
 | `scripts/agent_state.py` | Stores the agent's position, direction, and status. |
 | `scripts/direction.py` | Defines the four directions and turn calculations. |
@@ -76,6 +77,12 @@ suite, run:
 
 ```bash
 python scripts/testmain.py
+```
+
+Randomized layouts can be rendered with a repeatable seed:
+
+```bash
+python scripts/randommain.py
 ```
 
 ## Contributing
