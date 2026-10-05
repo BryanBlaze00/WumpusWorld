@@ -260,6 +260,64 @@ class TestBoardLayouts(unittest.TestCase):
 
 
 class TestRandomizedLayouts(unittest.TestCase):
+    def test_randomized_grid_uses_area_based_pit_count_and_protected_start(self):
+        environment = WumpusEnvironment(
+            randomize=True,
+            seed=7,
+            grid_size_range=(4, 10),
+            randomize_start=True,
+        )
+        start_x, start_y = environment.start_pos
+        protected = {
+            (start_x, start_y),
+            (start_x - 1, start_y),
+            (start_x + 1, start_y),
+            (start_x, start_y - 1),
+            (start_x, start_y + 1),
+        }
+        protected = {
+            position
+            for position in protected
+            if 1 <= position[0] <= environment.grid_size
+            and 1 <= position[1] <= environment.grid_size
+        }
+        objects = {environment.wumpus_pos, environment.gold_pos}
+        objects.update(environment.pits)
+
+        self.assertIn(environment.grid_size, range(4, 11))
+        expected_pits = max(1, round(environment.grid_size ** 2 * 0.15))
+        self.assertEqual(len(environment.pits), expected_pits)
+        self.assertTrue(protected.isdisjoint(objects))
+
+    def test_area_based_pit_count_grows_with_board_size(self):
+        for grid_size, expected_pits in ((4, 2), (6, 5), (10, 15)):
+            with self.subTest(grid_size=grid_size):
+                environment = WumpusEnvironment(
+                    grid_size=grid_size,
+                    randomize=True,
+                    seed=7,
+                )
+
+                self.assertEqual(len(environment.pits), expected_pits)
+
+    def test_randomized_start_is_repeatable_with_seed(self):
+        first = WumpusEnvironment(
+            randomize=True,
+            seed=7,
+            grid_size_range=(4, 10),
+            randomize_start=True,
+        )
+        second = WumpusEnvironment(
+            randomize=True,
+            seed=7,
+            grid_size_range=(4, 10),
+            randomize_start=True,
+        )
+
+        self.assertEqual(first.start_pos, second.start_pos)
+        self.assertEqual(first.grid_size, second.grid_size)
+        self.assertEqual(first.pits, second.pits)
+
     def test_seeded_layouts_are_repeatable(self):
         first = WumpusEnvironment(randomize=True, seed=7)
         second = WumpusEnvironment(randomize=True, seed=7)

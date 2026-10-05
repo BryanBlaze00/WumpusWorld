@@ -7,7 +7,7 @@ def main():
         grid_size=5,
         wumpus_pos=(4, 2),
         pits={(1, 4), (3, 3), (4, 4), (5, 1)},
-        gold_pos=(3, 5),
+        gold_pos=(3, 4),
     )
     BoardRenderer(environment).render()
 
