@@ -13,7 +13,7 @@ def clear_screen():
 def run_simulation(env, renderer, delay=1.0):
     step = 0
 
-    while env.agent.is_alive and not env.agent.has_gold:
+    while env.agent.is_alive and not env.is_won():
         clear_screen()
         step += 1
 
@@ -43,8 +43,10 @@ def run_simulation(env, renderer, delay=1.0):
 
     if not env.agent.is_alive:
         print("\n💀 The Agent died!")
+    elif env.is_won():
+        print("\n🎉 Gold Found and Returned Home!")
     elif env.agent.has_gold:
-        print("\n🎉 Gold Found and Grabbed!")
+        print("\n🪙 Gold Found! Return to the Starting Cell.")
 
 
 if __name__ == "__main__":
