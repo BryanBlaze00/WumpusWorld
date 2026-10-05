@@ -296,5 +296,32 @@ class TestRandomizedLayouts(unittest.TestCase):
             WumpusEnvironment(grid_size=2, randomize=True, pit_count=3)
 
 
+class TestWinCondition(unittest.TestCase):
+    def test_gold_cell_does_not_win_until_agent_returns_home(self):
+        environment = WumpusEnvironment()
+        environment.agent.x, environment.agent.y = environment.gold_pos
+
+        self.assertTrue(environment.grab())
+        self.assertFalse(environment.is_won())
+
+    def test_agent_with_gold_wins_at_start(self):
+        environment = WumpusEnvironment()
+        environment.agent.has_gold = True
+
+        self.assertTrue(environment.is_won())
+
+    def test_agent_without_gold_does_not_win_at_start(self):
+        environment = WumpusEnvironment()
+
+        self.assertFalse(environment.is_won())
+
+    def test_dead_agent_does_not_win_at_start(self):
+        environment = WumpusEnvironment()
+        environment.agent.has_gold = True
+        environment.agent.is_alive = False
+
+        self.assertFalse(environment.is_won())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -16,7 +16,12 @@ class WumpusEnvironment:
         pit_count=2,
     ):
         self.grid_size = grid_size
-        self.agent = AgentState(x=1, y=1, direction=Direction.EAST)
+        self.start_pos = (1, 1)
+        self.agent = AgentState(
+            x=self.start_pos[0],
+            y=self.start_pos[1],
+            direction=Direction.EAST,
+        )
 
         if randomize:
             wumpus_pos, pits, gold_pos = self._generate_layout(seed, pit_count)
@@ -128,6 +133,13 @@ class WumpusEnvironment:
 
         self.agent.has_gold = True
         return True
+
+    def is_won(self):
+        return (
+            self.agent.is_alive
+            and self.agent.has_gold
+            and (self.agent.x, self.agent.y) == self.start_pos
+        )
 
     def shoot(self):
         if not self.agent.is_alive or not self.agent.has_arrow:
