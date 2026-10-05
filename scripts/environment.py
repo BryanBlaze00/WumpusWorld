@@ -11,7 +11,12 @@ class WumpusEnvironment:
         gold_pos=(2, 3),
     ):
         self.grid_size = grid_size
-        self.agent = AgentState(x=1, y=1, direction=Direction.EAST)
+        self.start_pos = (1, 1)
+        self.agent = AgentState(
+            x=self.start_pos[0],
+            y=self.start_pos[1],
+            direction=Direction.EAST,
+        )
 
         self.wumpus_pos = wumpus_pos
         self.pits = set(pits) if pits is not None else {(3, 1), (3, 3)}
@@ -102,6 +107,13 @@ class WumpusEnvironment:
 
         self.agent.has_gold = True
         return True
+
+    def is_won(self):
+        return (
+            self.agent.is_alive
+            and self.agent.has_gold
+            and (self.agent.x, self.agent.y) == self.start_pos
+        )
 
     def shoot(self):
         if not self.agent.is_alive or not self.agent.has_arrow:
