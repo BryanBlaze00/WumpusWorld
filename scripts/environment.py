@@ -1,3 +1,5 @@
+import random
+
 from agent_state import AgentState
 from direction import Direction
 
@@ -9,6 +11,9 @@ class WumpusEnvironment:
         wumpus_pos=(1, 3),
         pits=None,
         gold_pos=(2, 3),
+        randomize=False,
+        seed=None,
+        pit_count=2,
     ):
         self.grid_size = grid_size
         self.start_pos = (1, 1)
@@ -17,6 +22,9 @@ class WumpusEnvironment:
             y=self.start_pos[1],
             direction=Direction.EAST,
         )
+
+        if randomize:
+            wumpus_pos, pits, gold_pos = self._generate_layout(seed, pit_count)
 
         self.wumpus_pos = wumpus_pos
         self.pits = set(pits) if pits is not None else {(3, 1), (3, 3)}
@@ -63,6 +71,24 @@ class WumpusEnvironment:
             and 1 <= position[0] <= self.grid_size
             and 1 <= position[1] <= self.grid_size
         )
+
+    def _generate_layout(self, seed, pit_count):
+        if not isinstance(pit_count, int) or pit_count < 0:
+            raise ValueError("pit_count must be a non-negative integer")
+
+        positions = [
+            (x, y)
+            for x in range(1, self.grid_size + 1)
+            for y in range(1, self.grid_size + 1)
+            if (x, y) != (1, 1)
+        ]
+        required_positions = pit_count + 2
+        if required_positions > len(positions):
+            raise ValueError("pit_count is too large for the board")
+
+        generator = random.Random(seed)
+        selected = generator.sample(positions, required_positions)
+        return selected[0], set(selected[1 : pit_count + 1]), selected[-1]
 
     def record_current_percepts(self):
         pos = (self.agent.x, self.agent.y)

@@ -259,6 +259,43 @@ class TestBoardLayouts(unittest.TestCase):
                     WumpusEnvironment(**layout)
 
 
+class TestRandomizedLayouts(unittest.TestCase):
+    def test_seeded_layouts_are_repeatable(self):
+        first = WumpusEnvironment(randomize=True, seed=7)
+        second = WumpusEnvironment(randomize=True, seed=7)
+
+        self.assertEqual(first.wumpus_pos, second.wumpus_pos)
+        self.assertEqual(first.pits, second.pits)
+        self.assertEqual(first.gold_pos, second.gold_pos)
+
+    def test_different_seeds_can_produce_different_layouts(self):
+        first = WumpusEnvironment(randomize=True, seed=7)
+        second = WumpusEnvironment(randomize=True, seed=8)
+
+        self.assertNotEqual(
+            (first.wumpus_pos, first.pits, first.gold_pos),
+            (second.wumpus_pos, second.pits, second.gold_pos),
+        )
+
+    def test_randomized_layout_respects_constraints(self):
+        environment = WumpusEnvironment(
+            grid_size=5,
+            randomize=True,
+            seed=7,
+            pit_count=5,
+        )
+        objects = {environment.wumpus_pos, environment.gold_pos}
+        objects.update(environment.pits)
+
+        self.assertEqual(len(environment.pits), 5)
+        self.assertNotIn((1, 1), objects)
+        self.assertEqual(len(objects), 7)
+
+    def test_randomized_layout_rejects_too_many_pits(self):
+        with self.assertRaises(ValueError):
+            WumpusEnvironment(grid_size=2, randomize=True, pit_count=3)
+
+
 class TestWinCondition(unittest.TestCase):
     def test_gold_cell_does_not_win_until_agent_returns_home(self):
         environment = WumpusEnvironment()
