@@ -295,6 +295,56 @@ class TestRandomizedLayouts(unittest.TestCase):
         with self.assertRaises(ValueError):
             WumpusEnvironment(grid_size=2, randomize=True, pit_count=3)
 
+    def test_randomized_grid_size_stays_within_range(self):
+        environment = WumpusEnvironment(
+            grid_size_range=(4, 6),
+            randomize=True,
+            seed=7,
+        )
+
+        self.assertIn(environment.grid_size, (4, 5, 6))
+
+    def test_randomized_pit_count_matches_grid_size(self):
+        for grid_size in (4, 5, 6):
+            with self.subTest(grid_size=grid_size):
+                environment = WumpusEnvironment(
+                    grid_size=grid_size,
+                    randomize=True,
+                    seed=7,
+                    randomize_start=True,
+                )
+
+                self.assertEqual(len(environment.pits), grid_size - 1)
+
+    def test_randomized_start_area_is_protected(self):
+        environment = WumpusEnvironment(
+            grid_size=6,
+            randomize=True,
+            seed=7,
+            randomize_start=True,
+        )
+        protected = environment._protected_start_positions(environment.start_pos)
+        objects = {environment.wumpus_pos, environment.gold_pos}
+        objects.update(environment.pits)
+
+        self.assertTrue(protected.isdisjoint(objects))
+
+    def test_randomized_layout_is_repeatable(self):
+        options = {
+            "grid_size_range": (4, 10),
+            "randomize": True,
+            "seed": 7,
+            "randomize_start": True,
+        }
+        first = WumpusEnvironment(**options)
+        second = WumpusEnvironment(**options)
+
+        self.assertEqual(first.grid_size, second.grid_size)
+        self.assertEqual(first.start_pos, second.start_pos)
+        self.assertEqual(first.wumpus_pos, second.wumpus_pos)
+        self.assertEqual(first.pits, second.pits)
+        self.assertEqual(first.gold_pos, second.gold_pos)
+
 
 class TestWinCondition(unittest.TestCase):
     def test_gold_cell_does_not_win_until_agent_returns_home(self):

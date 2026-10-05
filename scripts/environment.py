@@ -13,10 +13,20 @@ class WumpusEnvironment:
         gold_pos=(2, 3),
         randomize=False,
         seed=None,
-        pit_count=2,
+        pit_count=None,
+        grid_size_range=None,
+        randomize_start=False,
+        start_pos=(1, 1),
     ):
-        self.grid_size = grid_size
-        self.start_pos = (1, 1)
+        generator = random.Random(seed)
+        self.grid_size = (
+            self._select_grid_size(grid_size_range, generator)
+            if grid_size_range is not None
+            else grid_size
+        )
+        if randomize_start:
+            start_pos = self._select_start_position(generator)
+        self.start_pos = start_pos
         self.agent = AgentState(
             x=self.start_pos[0],
             y=self.start_pos[1],
@@ -24,7 +34,13 @@ class WumpusEnvironment:
         )
 
         if randomize:
-            wumpus_pos, pits, gold_pos = self._generate_layout(seed, pit_count)
+            if pit_count is None:
+                pit_count = self.grid_size - 1
+            wumpus_pos, pits, gold_pos = self._generate_layout(
+                generator,
+                pit_count,
+                self.start_pos,
+            )
 
         self.wumpus_pos = wumpus_pos
         self.pits = set(pits) if pits is not None else {(3, 1), (3, 3)}
@@ -54,7 +70,7 @@ class WumpusEnvironment:
             if not self._is_valid_position(pit):
                 raise ValueError("pit position is outside the board")
 
-        start = (self.agent.x, self.agent.y)
+        start = self.start_pos
         if self.wumpus_pos == start or self.gold_pos == start or start in self.pits:
             raise ValueError("the agent start position cannot contain an object")
 
@@ -72,7 +88,43 @@ class WumpusEnvironment:
             and 1 <= position[1] <= self.grid_size
         )
 
-    def _generate_layout(self, seed, pit_count):
+    def _select_grid_size(self, grid_size_range, generator):
+        if (
+            not isinstance(grid_size_range, (tuple, list))
+            or len(grid_size_range) != 2
+            or not all(isinstance(size, int) for size in grid_size_range)
+            or grid_size_range[0] < 1
+            or grid_size_range[0] > grid_size_range[1]
+        ):
+            raise ValueError("grid_size_range must contain two ordered integers")
+
+        return generator.randint(grid_size_range[0], grid_size_range[1])
+
+    def _select_start_position(self, generator):
+        return generator.choice(
+            [
+                (x, y)
+                for x in range(1, self.grid_size + 1)
+                for y in range(1, self.grid_size + 1)
+            ]
+        )
+
+    def _protected_start_positions(self, start_pos):
+        x, y = start_pos
+        board_positions = {
+            (x_pos, y_pos)
+            for x_pos in range(1, self.grid_size + 1)
+            for y_pos in range(1, self.grid_size + 1)
+        }
+        return {
+            (x, y),
+            (x - 1, y),
+            (x + 1, y),
+            (x, y - 1),
+            (x, y + 1),
+        } & board_positions
+
+    def _generate_layout(self, generator, pit_count, start_pos):
         if not isinstance(pit_count, int) or pit_count < 0:
             raise ValueError("pit_count must be a non-negative integer")
 
@@ -80,13 +132,12 @@ class WumpusEnvironment:
             (x, y)
             for x in range(1, self.grid_size + 1)
             for y in range(1, self.grid_size + 1)
-            if (x, y) != (1, 1)
+            if (x, y) not in self._protected_start_positions(start_pos)
         ]
         required_positions = pit_count + 2
         if required_positions > len(positions):
             raise ValueError("pit_count is too large for the board")
 
-        generator = random.Random(seed)
         selected = generator.sample(positions, required_positions)
         return selected[0], set(selected[1 : pit_count + 1]), selected[-1]
 
