@@ -4,10 +4,9 @@ from renderer import BoardRenderer
 
 def main():
     environment = WumpusEnvironment(
-        grid_size=5,
         randomize=True,
-        seed=7,
-        pit_count=5,
+        grid_size_range=(4, 10),
+        randomize_start=True,
     )
     BoardRenderer(environment).render()
 
