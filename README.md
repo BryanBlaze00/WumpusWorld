@@ -27,6 +27,15 @@ python scripts/main.py
 The simulation renders the board, prints the current percepts, and advances
 the agent through the demonstration loop.
 
+Optional command-line settings:
+
+```bash
+python scripts/main.py --delay 0.25 --grid-size 6
+```
+
+`--delay` controls the pause between steps, and `--grid-size` sets the board
+width and height. The default values are 1 second and a 4x4 board.
+
 The renderer uses box-drawing characters and emojis. If a terminal cannot
 display them, configure the terminal for UTF-8 or use a UTF-8-capable
 integrated terminal.
