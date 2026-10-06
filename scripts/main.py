@@ -1,3 +1,4 @@
+import argparse
 import os
 import time
 from environment import WumpusEnvironment
@@ -49,7 +50,43 @@ def run_simulation(env, renderer, delay=1.0):
         print("\n🪙 Gold Found! Return to the Starting Cell.")
 
 
-if __name__ == "__main__":
-    simulation_env = WumpusEnvironment()
+def positive_float(value):
+    delay = float(value)
+    if delay < 0:
+        raise argparse.ArgumentTypeError("delay must be non-negative")
+    return delay
+
+
+def valid_grid_size(value):
+    grid_size = int(value)
+    if grid_size < 3:
+        raise argparse.ArgumentTypeError("grid size must be at least 3")
+    return grid_size
+
+
+def parse_args(args=None):
+    parser = argparse.ArgumentParser(description="Run the Wumpus World simulation.")
+    parser.add_argument(
+        "--delay",
+        type=positive_float,
+        default=1.0,
+        help="seconds to wait between simulation steps (default: 1.0)",
+    )
+    parser.add_argument(
+        "--grid-size",
+        type=valid_grid_size,
+        default=4,
+        help="board width and height (default: 4)",
+    )
+    return parser.parse_args(args)
+
+
+def main(args=None):
+    options = parse_args(args)
+    simulation_env = WumpusEnvironment(grid_size=options.grid_size)
     board_renderer = BoardRenderer(simulation_env)
-    run_simulation(simulation_env, board_renderer, delay=1.0)
+    run_simulation(simulation_env, board_renderer, delay=options.delay)
+
+
+if __name__ == "__main__":
+    main()
