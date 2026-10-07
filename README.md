@@ -36,9 +36,10 @@ python scripts/main.py --delay 0.25 --grid-size 6
 `--delay` controls the pause between steps, and `--grid-size` sets the board
 width and height. The default values are 1 second and a 4x4 board.
 
-The renderer uses box-drawing characters and emojis. If a terminal cannot
-display them, configure the terminal for UTF-8 or use a UTF-8-capable
-integrated terminal.
+The renderer uses box-drawing characters and emojis when the terminal supports
+UTF-8. On terminals with limited encoding support, it automatically falls back
+to an ASCII board using letters and symbols such as `W` for Wumpus, `P` for
+pit, and `G` for gold.
 
 ### Current Output
 
