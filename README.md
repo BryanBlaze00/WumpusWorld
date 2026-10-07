@@ -94,6 +94,12 @@ Randomized layouts can be rendered with a repeatable seed:
 python scripts/randommain.py
 ```
 
+To reproduce a specific randomized board, provide its seed:
+
+```bash
+python scripts/randommain.py --seed 123
+```
+
 ## Contributing
 
 Contributions are welcome. Start by opening or selecting an issue, then create
