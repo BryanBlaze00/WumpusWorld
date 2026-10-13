@@ -260,6 +260,55 @@ class TestBoardLayouts(unittest.TestCase):
 
 
 class TestRandomizedLayouts(unittest.TestCase):
+    def test_randomized_boundary_sizes_preserve_layout_constraints(self):
+        for grid_size in (4, 10):
+            with self.subTest(grid_size=grid_size):
+                environment = WumpusEnvironment(
+                    grid_size=grid_size,
+                    randomize=True,
+                    randomize_start=True,
+                    seed=grid_size,
+                )
+                protected = environment._protected_start_positions()
+                objects = {
+                    environment.wumpus_pos,
+                    environment.gold_pos,
+                    *environment.pits,
+                }
+
+                self.assertEqual(environment.grid_size, grid_size)
+                self.assertEqual(
+                    len(environment.pits),
+                    max(1, round(grid_size**2 * 0.15)),
+                )
+                self.assertTrue(protected.isdisjoint(objects))
+                self.assertEqual(len(objects), len(environment.pits) + 2)
+
+    def test_randomized_grid_size_range_includes_both_bounds(self):
+        sizes = {
+            WumpusEnvironment(
+                randomize=True,
+                randomize_start=True,
+                grid_size_range=(4, 10),
+                seed=seed,
+            ).grid_size
+            for seed in range(100)
+        }
+
+        self.assertIn(4, sizes)
+        self.assertIn(10, sizes)
+
+    def test_randomized_layout_rejects_invalid_grid_size_range(self):
+        invalid_ranges = ((0, 4), (5, 4), (4,), (4, 10, 11))
+
+        for grid_size_range in invalid_ranges:
+            with self.subTest(grid_size_range=grid_size_range):
+                with self.assertRaises(ValueError):
+                    WumpusEnvironment(
+                        randomize=True,
+                        grid_size_range=grid_size_range,
+                    )
+
     def test_randomized_grid_uses_area_based_pit_count_and_protected_start(self):
         environment = WumpusEnvironment(
             randomize=True,
