@@ -285,12 +285,12 @@ class TestRandomizedLayouts(unittest.TestCase):
         objects.update(environment.pits)
 
         self.assertIn(environment.grid_size, range(4, 11))
-        expected_pits = max(1, round(environment.grid_size ** 2 * 0.20))
+        expected_pits = max(1, round(environment.grid_size ** 2 * 0.25))
         self.assertEqual(len(environment.pits), expected_pits)
         self.assertTrue(protected.isdisjoint(objects))
 
     def test_area_based_pit_count_grows_with_board_size(self):
-        for grid_size, expected_pits in ((4, 3), (6, 7), (10, 20)):
+        for grid_size, expected_pits in ((4, 4), (6, 9), (10, 25)):
             with self.subTest(grid_size=grid_size):
                 environment = WumpusEnvironment(
                     grid_size=grid_size,

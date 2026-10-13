@@ -17,7 +17,7 @@ class WumpusEnvironment:
         randomize_start=False,
         start_pos=(1, 1),
         pit_count=None,
-        pit_density=0.20,
+        pit_density=0.25,
     ):
         generator = random.Random(seed)
         self.grid_size = self._select_grid_size(grid_size, grid_size_range, generator)
