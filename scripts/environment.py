@@ -17,6 +17,7 @@ class WumpusEnvironment:
         randomize_start=False,
         start_pos=(1, 1),
         pit_count=None,
+        pit_density=0.25,
     ):
         generator = random.Random(seed)
         self.grid_size = self._select_grid_size(grid_size, grid_size_range, generator)
@@ -32,7 +33,7 @@ class WumpusEnvironment:
 
         if randomize:
             wumpus_pos, pits, gold_pos = self._generate_layout(
-                generator, pit_count, randomize_start
+                generator, pit_count, randomize_start, pit_density
             )
 
         self.wumpus_pos = wumpus_pos
@@ -118,11 +119,17 @@ class WumpusEnvironment:
             if self._is_valid_position(position)
         }
 
-    def _generate_layout(self, generator, pit_count, protect_start):
+    def _generate_layout(self, generator, pit_count, protect_start, pit_density):
         if pit_count is None:
-            pit_count = max(1, round(self.grid_size ** 2 * 0.15))
+            if not isinstance(pit_density, (int, float)) or not 0 < pit_density < 1:
+                raise ValueError("pit_density must be greater than 0 and less than 1")
+            pit_count = max(1, round(self.grid_size ** 2 * pit_density))
+            if self.grid_size == 4:
+                pit_count = min(pit_count, 3)
         if not isinstance(pit_count, int) or pit_count < 0:
             raise ValueError("pit_count must be a non-negative integer")
+        if self.grid_size == 4 and pit_count > 3:
+            raise ValueError("4x4 boards support at most 3 pits")
 
         positions = [
             position
