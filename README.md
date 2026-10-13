@@ -101,6 +101,11 @@ To reproduce a specific randomized board, provide its seed:
 python scripts/randommain.py --seed 123
 ```
 
+Randomized boards use pits on approximately 20% of the board area by
+default. Custom layouts can choose a different density with
+`pit_density`, or provide an explicit `pit_count` when exact control is
+needed.
+
 ## Contributing
 
 Contributions are welcome. Start by opening or selecting an issue, then create

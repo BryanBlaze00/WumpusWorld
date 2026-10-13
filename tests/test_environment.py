@@ -285,12 +285,12 @@ class TestRandomizedLayouts(unittest.TestCase):
         objects.update(environment.pits)
 
         self.assertIn(environment.grid_size, range(4, 11))
-        expected_pits = max(1, round(environment.grid_size ** 2 * 0.15))
+        expected_pits = max(1, round(environment.grid_size ** 2 * 0.20))
         self.assertEqual(len(environment.pits), expected_pits)
         self.assertTrue(protected.isdisjoint(objects))
 
     def test_area_based_pit_count_grows_with_board_size(self):
-        for grid_size, expected_pits in ((4, 2), (6, 5), (10, 15)):
+        for grid_size, expected_pits in ((4, 3), (6, 7), (10, 20)):
             with self.subTest(grid_size=grid_size):
                 environment = WumpusEnvironment(
                     grid_size=grid_size,
@@ -299,6 +299,26 @@ class TestRandomizedLayouts(unittest.TestCase):
                 )
 
                 self.assertEqual(len(environment.pits), expected_pits)
+
+    def test_custom_pit_density_controls_generated_pits(self):
+        environment = WumpusEnvironment(
+            grid_size=10,
+            randomize=True,
+            seed=7,
+            pit_density=0.10,
+        )
+
+        self.assertEqual(len(environment.pits), 10)
+
+    def test_invalid_pit_density_is_rejected(self):
+        for pit_density in (0, 1, -0.1, 1.1, "many"):
+            with self.subTest(pit_density=pit_density):
+                with self.assertRaises(ValueError):
+                    WumpusEnvironment(
+                        grid_size=10,
+                        randomize=True,
+                        pit_density=pit_density,
+                    )
 
     def test_randomized_start_is_repeatable_with_seed(self):
         first = WumpusEnvironment(
