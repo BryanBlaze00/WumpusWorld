@@ -124,8 +124,12 @@ class WumpusEnvironment:
             if not isinstance(pit_density, (int, float)) or not 0 < pit_density < 1:
                 raise ValueError("pit_density must be greater than 0 and less than 1")
             pit_count = max(1, round(self.grid_size ** 2 * pit_density))
+            if self.grid_size == 4:
+                pit_count = min(pit_count, 3)
         if not isinstance(pit_count, int) or pit_count < 0:
             raise ValueError("pit_count must be a non-negative integer")
+        if self.grid_size == 4 and pit_count > 3:
+            raise ValueError("4x4 boards support at most 3 pits")
 
         positions = [
             position

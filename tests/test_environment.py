@@ -285,12 +285,15 @@ class TestRandomizedLayouts(unittest.TestCase):
         objects.update(environment.pits)
 
         self.assertIn(environment.grid_size, range(4, 11))
-        expected_pits = max(1, round(environment.grid_size ** 2 * 0.25))
+        expected_pits = min(
+            max(1, round(environment.grid_size ** 2 * 0.25)),
+            3 if environment.grid_size == 4 else float("inf"),
+        )
         self.assertEqual(len(environment.pits), expected_pits)
         self.assertTrue(protected.isdisjoint(objects))
 
     def test_area_based_pit_count_grows_with_board_size(self):
-        for grid_size, expected_pits in ((4, 4), (6, 9), (10, 25)):
+        for grid_size, expected_pits in ((4, 3), (6, 9), (10, 25)):
             with self.subTest(grid_size=grid_size):
                 environment = WumpusEnvironment(
                     grid_size=grid_size,
@@ -299,6 +302,25 @@ class TestRandomizedLayouts(unittest.TestCase):
                 )
 
                 self.assertEqual(len(environment.pits), expected_pits)
+
+    def test_four_by_four_board_caps_default_pits_at_three(self):
+        for seed in range(20):
+            with self.subTest(seed=seed):
+                environment = WumpusEnvironment(
+                    grid_size=4,
+                    randomize=True,
+                    seed=seed,
+                )
+
+                self.assertEqual(len(environment.pits), 3)
+
+    def test_four_by_four_board_rejects_more_than_three_explicit_pits(self):
+        with self.assertRaises(ValueError):
+            WumpusEnvironment(
+                grid_size=4,
+                randomize=True,
+                pit_count=4,
+            )
 
     def test_custom_pit_density_controls_generated_pits(self):
         environment = WumpusEnvironment(
