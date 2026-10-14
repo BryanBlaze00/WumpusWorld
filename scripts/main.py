@@ -14,7 +14,7 @@ def clear_screen():
 def run_simulation(env, renderer, delay=1.0):
     step = 0
 
-    while env.agent.is_alive and not env.is_won():
+    while env.get_game_state() == env.PLAYING:
         clear_screen()
         step += 1
 
@@ -42,9 +42,10 @@ def run_simulation(env, renderer, delay=1.0):
     print("=== Final State ===")
     renderer.render()
 
-    if not env.agent.is_alive:
+    game_state = env.get_game_state()
+    if game_state == env.LOST:
         print("\n💀 The Agent died!")
-    elif env.is_won():
+    elif game_state == env.WON:
         print("\n🎉 Gold Found and Returned Home!")
     elif env.agent.has_gold:
         print("\n🪙 Gold Found! Return to the Starting Cell.")

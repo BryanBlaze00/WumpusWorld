@@ -4,6 +4,9 @@ from agent_state import AgentState
 from direction import Direction
 
 class WumpusEnvironment:
+    PLAYING = "playing"
+    WON = "won"
+    LOST = "lost"
 
     def __init__(
         self,
@@ -198,6 +201,14 @@ class WumpusEnvironment:
             and self.agent.has_gold
             and (self.agent.x, self.agent.y) == self.start_pos
         )
+
+    def get_game_state(self):
+        """Return the current game state: ``playing``, ``won``, or ``lost``."""
+        if self.is_won():
+            return self.WON
+        if not self.agent.is_alive:
+            return self.LOST
+        return self.PLAYING
 
     def shoot(self):
         if not self.agent.is_alive or not self.agent.has_arrow:
