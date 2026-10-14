@@ -474,6 +474,24 @@ class TestWinCondition(unittest.TestCase):
 
         self.assertFalse(environment.is_won())
 
+    def test_new_game_is_playing(self):
+        environment = WumpusEnvironment()
+
+        self.assertEqual(environment.get_game_state(), environment.PLAYING)
+
+    def test_collecting_gold_at_home_is_won(self):
+        environment = WumpusEnvironment()
+        environment.agent.has_gold = True
+
+        self.assertEqual(environment.get_game_state(), environment.WON)
+
+    def test_dead_agent_is_lost_even_if_it_has_gold(self):
+        environment = WumpusEnvironment()
+        environment.agent.has_gold = True
+        environment.agent.is_alive = False
+
+        self.assertEqual(environment.get_game_state(), environment.LOST)
+
 
 if __name__ == "__main__":
     unittest.main()
