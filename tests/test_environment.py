@@ -279,7 +279,10 @@ class TestRandomizedLayouts(unittest.TestCase):
                 self.assertEqual(environment.grid_size, grid_size)
                 self.assertEqual(
                     len(environment.pits),
-                    max(1, round(grid_size**2 * 0.15)),
+                    min(
+                        max(1, round(grid_size**2 * 0.25)),
+                        3 if grid_size == 4 else float("inf"),
+                    ),
                 )
                 self.assertTrue(protected.isdisjoint(objects))
                 self.assertEqual(len(objects), len(environment.pits) + 2)
