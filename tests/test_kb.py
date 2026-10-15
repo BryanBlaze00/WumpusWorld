@@ -67,7 +67,75 @@ class TestKnowledgeBasePercepts(unittest.TestCase):
         )
 
         self.assertTrue(self.knowledge_base.ask_is_safe(self.position))
-        self.assertIsNone(self.knowledge_base.ask_next_unvisited_safe())
+        self.assertEqual(
+            self.knowledge_base.ask_next_unvisited_safe(),
+            (1, 2),
+        )
+
+
+class TestKnowledgeBaseInference(unittest.TestCase):
+    def setUp(self):
+        self.knowledge_base = KnowledgeBase()
+        self.position = (2, 2)
+
+    def test_empty_percepts_mark_adjacent_cells_safe(self):
+        self.knowledge_base.tell(
+            self.position,
+            {"breeze": False, "stench": False, "glitter": False},
+        )
+
+        adjacent = {(1, 2), (3, 2), (2, 1), (2, 3)}
+
+        self.assertTrue(adjacent.issubset(self.knowledge_base.safe_cells))
+        self.assertFalse(self.knowledge_base.possible_pits)
+        self.assertFalse(self.knowledge_base.possible_wumpus)
+
+    def test_breeze_tracks_possible_pits_without_marking_them_safe(self):
+        self.knowledge_base.tell(
+            self.position,
+            {"breeze": True, "stench": False, "glitter": False},
+        )
+
+        adjacent = {(1, 2), (3, 2), (2, 1), (2, 3)}
+
+        self.assertEqual(self.knowledge_base.possible_pits, adjacent)
+        self.assertFalse(adjacent & self.knowledge_base.safe_cells)
+
+    def test_stench_tracks_possible_wumpus_without_marking_them_safe(self):
+        self.knowledge_base.tell(
+            self.position,
+            {"breeze": False, "stench": True, "glitter": False},
+        )
+
+        adjacent = {(1, 2), (3, 2), (2, 1), (2, 3)}
+
+        self.assertEqual(self.knowledge_base.possible_wumpus, adjacent)
+        self.assertFalse(adjacent & self.knowledge_base.safe_cells)
+
+    def test_safe_observation_removes_cells_from_hazard_candidates(self):
+        self.knowledge_base.tell(
+            self.position,
+            {"breeze": True, "stench": True, "glitter": False},
+        )
+        self.knowledge_base.tell(
+            (2, 3),
+            {"breeze": False, "stench": False, "glitter": False},
+        )
+
+        self.assertNotIn((2, 3), self.knowledge_base.possible_pits)
+        self.assertNotIn((2, 3), self.knowledge_base.possible_wumpus)
+        self.assertIn((2, 3), self.knowledge_base.safe_cells)
+
+    def test_next_safe_cell_selection_is_deterministic(self):
+        self.knowledge_base.tell(
+            self.position,
+            {"breeze": False, "stench": False, "glitter": False},
+        )
+
+        self.assertEqual(
+            self.knowledge_base.ask_next_unvisited_safe(),
+            (1, 2),
+        )
 
 
 if __name__ == "__main__":
