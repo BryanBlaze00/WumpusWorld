@@ -6,12 +6,14 @@ from renderer import BoardRenderer
 
 
 def clear_screen():
+    """Clear the terminal before rendering the next simulation frame."""
     # ANSI escape sequence clears PyCharm terminal & console screen reliably
     print("\033[H\033[2J", end="")
     os.system("cls" if os.name == "nt" else "clear")
 
 
 def run_simulation(env, renderer, delay=1.0):
+    """Run the demonstration loop until the environment reaches a final state."""
     step = 0
 
     while env.get_game_state() == env.PLAYING:
@@ -52,6 +54,7 @@ def run_simulation(env, renderer, delay=1.0):
 
 
 def positive_float(value):
+    """Parse a non-negative floating-point command-line value."""
     delay = float(value)
     if delay < 0:
         raise argparse.ArgumentTypeError("delay must be non-negative")
@@ -59,6 +62,7 @@ def positive_float(value):
 
 
 def valid_grid_size(value):
+    """Parse a command-line grid size of at least three cells."""
     grid_size = int(value)
     if grid_size < 3:
         raise argparse.ArgumentTypeError("grid size must be at least 3")
@@ -66,6 +70,7 @@ def valid_grid_size(value):
 
 
 def parse_args(args=None):
+    """Parse simulation options from argv-compatible input."""
     parser = argparse.ArgumentParser(description="Run the Wumpus World simulation.")
     parser.add_argument(
         "--delay",
@@ -83,6 +88,7 @@ def parse_args(args=None):
 
 
 def main(args=None):
+    """Create the configured environment and run the simulation."""
     options = parse_args(args)
     simulation_env = WumpusEnvironment(grid_size=options.grid_size)
     board_renderer = BoardRenderer(simulation_env)

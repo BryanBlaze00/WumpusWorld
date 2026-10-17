@@ -6,6 +6,7 @@ from renderer import BoardRenderer
 
 
 def parse_args(args=None):
+    """Parse the optional seed used to reproduce a randomized board."""
     parser = argparse.ArgumentParser(
         description="Render a randomized Wumpus World board."
     )
@@ -18,6 +19,7 @@ def parse_args(args=None):
 
 
 def main(args=None):
+    """Create and render a seeded or freshly randomized board."""
     options = parse_args(args)
     seed = options.seed if options.seed is not None else random.SystemRandom().randrange(
         0, 2**32

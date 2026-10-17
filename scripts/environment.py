@@ -3,7 +3,10 @@ import random
 from agent_state import AgentState
 from direction import Direction
 
+
 class WumpusEnvironment:
+    """Model the board, hazards, percepts, actions, and game outcome."""
+
     PLAYING = "playing"
     WON = "won"
     LOST = "lost"
@@ -22,6 +25,7 @@ class WumpusEnvironment:
         pit_count=None,
         pit_density=0.25,
     ):
+        """Create a fixed or randomized board and initialize the agent."""
         generator = random.Random(seed)
         self.grid_size = self._select_grid_size(grid_size, grid_size_range, generator)
         if randomize and randomize_start:
@@ -52,6 +56,7 @@ class WumpusEnvironment:
         self.record_current_percepts()
 
     def _select_grid_size(self, grid_size, grid_size_range, generator):
+        """Choose the configured size or a seeded size from the given range."""
         if grid_size_range is None:
             return grid_size
 
@@ -68,6 +73,7 @@ class WumpusEnvironment:
         return generator.randint(minimum, maximum)
 
     def _all_positions(self):
+        """Return every valid one-indexed coordinate on the board."""
         return [
             (x, y)
             for x in range(1, self.grid_size + 1)
@@ -75,6 +81,7 @@ class WumpusEnvironment:
         ]
 
     def _validate_layout(self):
+        """Reject invalid board dimensions, positions, and object overlaps."""
         if not isinstance(self.grid_size, int) or self.grid_size < 1:
             raise ValueError("grid_size must be a positive integer")
 
@@ -100,6 +107,7 @@ class WumpusEnvironment:
             raise ValueError("hazard and gold positions cannot overlap")
 
     def _is_valid_position(self, position):
+        """Return whether a coordinate is a valid position on this board."""
         return (
             isinstance(position, tuple)
             and len(position) == 2
@@ -109,6 +117,7 @@ class WumpusEnvironment:
         )
 
     def _protected_start_positions(self):
+        """Return the start cell and its in-bounds orthogonal neighbors."""
         x, y = self.start_pos
         return {
             position
@@ -123,6 +132,7 @@ class WumpusEnvironment:
         }
 
     def _generate_layout(self, generator, pit_count, protect_start, pit_density):
+        """Generate non-overlapping hazard and gold positions deterministically."""
         if pit_count is None:
             if not isinstance(pit_density, (int, float)) or not 0 < pit_density < 1:
                 raise ValueError("pit_density must be greater than 0 and less than 1")
@@ -152,10 +162,12 @@ class WumpusEnvironment:
         return selected[0], set(selected[1 : pit_count + 1]), selected[-1]
 
     def record_current_percepts(self):
+        """Save the current cell's percepts in the discovery history."""
         pos = (self.agent.x, self.agent.y)
         self.discovered_percepts[pos] = self.get_percepts()
 
     def get_percepts(self):
+        """Return stench, breeze, and glitter sensed at the agent's position."""
         x, y = self.agent.x, self.agent.y
         stench = (
             self._is_adjacent((x, y), self.wumpus_pos)
@@ -167,11 +179,13 @@ class WumpusEnvironment:
         return {"stench": stench, "breeze": breeze, "glitter": glitter}
 
     def _is_adjacent(self, pos1, pos2):
+        """Return whether two positions share an orthogonal edge."""
         dx = abs(pos1[0] - pos2[0])
         dy = abs(pos1[1] - pos2[1])
         return (dx + dy) == 1
 
     def turn_left(self):
+        """Turn the living agent left and report whether the action succeeded."""
         if not self.agent.is_alive:
             return False
 
@@ -179,6 +193,7 @@ class WumpusEnvironment:
         return True
 
     def turn_right(self):
+        """Turn the living agent right and report whether the action succeeded."""
         if not self.agent.is_alive:
             return False
 
@@ -186,6 +201,7 @@ class WumpusEnvironment:
         return True
 
     def grab(self):
+        """Collect gold when the living agent occupies the gold cell."""
         if not self.agent.is_alive:
             return False
 
@@ -196,6 +212,7 @@ class WumpusEnvironment:
         return True
 
     def is_won(self):
+        """Return whether the agent has gold and has returned to its start."""
         return (
             self.agent.is_alive
             and self.agent.has_gold
@@ -211,6 +228,7 @@ class WumpusEnvironment:
         return self.PLAYING
 
     def shoot(self):
+        """Fire the single arrow along the agent's current row or column."""
         if not self.agent.is_alive or not self.agent.has_arrow:
             return False
 
@@ -238,6 +256,7 @@ class WumpusEnvironment:
         return True
 
     def move_forward(self):
+        """Move one cell forward, resolving walls and hazards."""
         if not self.agent.is_alive:
             return False
 

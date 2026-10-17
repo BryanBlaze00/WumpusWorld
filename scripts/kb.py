@@ -1,6 +1,8 @@
 class KnowledgeBase:
+    """Store percept history and derive safe and potentially hazardous cells."""
 
     def __init__(self):
+        """Initialize empty observations and inference results."""
         self.visited = set()
         self.safe_cells = set()
         self.percepts = {}
@@ -19,6 +21,7 @@ class KnowledgeBase:
         self._recompute_inferences()
 
     def _update_percept_cells(self, pos):
+        """Update indexes for positive percepts recorded at a position."""
         percepts = self.percepts[pos]
 
         self.breeze_cells.discard(pos)
@@ -34,6 +37,7 @@ class KnowledgeBase:
 
     @staticmethod
     def _adjacent_positions(pos):
+        """Return the four orthogonal neighbors of a position."""
         x, y = pos
         return {
             (x - 1, y),

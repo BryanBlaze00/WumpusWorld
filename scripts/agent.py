@@ -2,11 +2,14 @@ from kb import KnowledgeBase
 
 
 class KBAgent:
+    """Choose actions from percepts and facts recorded in a knowledge base."""
 
     def __init__(self):
+        """Create an agent with an empty knowledge base."""
         self.kb = KnowledgeBase()
 
     def choose_action(self, current_pos, percepts):
+        """Record percepts and begin selecting the next knowledge-based action."""
         # 1. Update KB with current percepts
         self.kb.tell(current_pos, percepts)
 

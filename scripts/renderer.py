@@ -4,11 +4,14 @@ from environment import Direction
 
 
 class BoardRenderer:
+    """Render the current environment state as a terminal board."""
 
     def __init__(self, environment):
+        """Bind the renderer to an environment instance."""
         self.env = environment
 
     def render(self, use_unicode=None):
+        """Print the board using Unicode symbols when supported or requested."""
         if use_unicode is None:
             use_unicode = self._supports_unicode()
 
@@ -99,6 +102,7 @@ class BoardRenderer:
 
     @staticmethod
     def _symbols(use_unicode):
+        """Return the symbol set for Unicode or ASCII terminal output."""
         if use_unicode:
             return {
                 "top_left": "┌",
@@ -151,6 +155,7 @@ class BoardRenderer:
 
     @staticmethod
     def _supports_unicode():
+        """Return whether stdout can encode the preferred Unicode symbols."""
         encoding = getattr(sys.stdout, "encoding", None)
         if not encoding:
             return True
