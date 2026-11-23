@@ -57,7 +57,7 @@ pit, and `G` for gold.
 | `scripts/direction.py` | Defines the four directions and turn calculations. |
 | `scripts/renderer.py` | Draws the board and discovered percepts in the terminal. |
 | `scripts/kb.py` | Provides the knowledge-base foundation for agent reasoning. |
-| `scripts/agent.py` | Provides the knowledge-based agent foundation. |
+| `scripts/agent.py` | Selects safe actions from knowledge-base facts. |
 
 ## Testing
 
@@ -67,6 +67,26 @@ simulation as a manual smoke test:
 ```bash
 python scripts/main.py
 ```
+
+The knowledge-based agent can be exercised independently from the environment:
+
+```python
+from agent import KBAgent
+from direction import Direction
+
+agent = KBAgent()
+action = agent.choose_action(
+    (1, 1),
+    {"breeze": False, "stench": False, "glitter": False},
+    Direction.EAST,
+)
+```
+
+`choose_action` returns `GRAB` for glitter, `FORWARD` or a turn when a
+guaranteed-safe unexplored route is available, and `NO_ACTION` when the
+knowledge base cannot identify a safe unexplored route. The agent does not
+mutate the environment; the simulation loop is responsible for executing the
+returned action.
 
 The issue tracker contains the current development tasks and project roadmap.
 
